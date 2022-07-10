@@ -15,7 +15,7 @@ const landStakingPoolContract = new ethers.Contract('0xb2a5110f163ec592f8f0d4207
 
 
 const findLand = (row, col) => {
-    return landTypes.find(x => x.row === row && x.col === col)
+    return landTypes.find(item => item.row === row && item.col === col)
 }
 app.get('/land/:address', async (req, res) => {
     try {
@@ -23,7 +23,7 @@ app.get('/land/:address', async (req, res) => {
         if (address && ethers.utils.isAddress(address)) {
             const landList = await landStakingPoolContract.getStakedLands(address);
             const landListWallet = await landContract.landOfOwner(address);
-            const results = { address: address, own: [], staked: [] }
+            const results = { address: address, owned: [], staked: [] }
             const tempArr = []
             for (var i = 0; i < landList.length; i++) {
                 tempArr.push(landContract.decodeTokenId(landList[i]))
@@ -33,7 +33,7 @@ app.get('/land/:address', async (req, res) => {
                 results.staked.push(findLand(Number(item._row), Number(item._col)))
             })
             for (var i = 0; i < landListWallet[0].length; i++) {
-                results.own.push(findLand(Number(landListWallet[0][i]), Number(landListWallet[1][i])))
+                results.owned.push(findLand(Number(landListWallet[0][i]), Number(landListWallet[1][i])))
             }
             res.status(200).send(results)
         } else {
