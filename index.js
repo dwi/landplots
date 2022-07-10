@@ -7,15 +7,15 @@ const port = 3200
 const url = 'https://api.roninchain.com/rpc';
 const provider = new ethers.providers.JsonRpcProvider(url)
 
-const landTypes = require("./LandList.json")
+const landTypes = ["Savannah", "Forest", "Artic", "Mystic", "Genesis"]
+const landGridData = require("./Land_Grid_Data_Multiplier.json")
 const landABI = require("./LandContract.json")
 const landStakingPoolABI = require("./LandStakingPool.json")
 const landContract = new ethers.Contract('0x8c811e3c958e190f5ec15fb376533a3398620500', landABI, provider);
 const landStakingPoolContract = new ethers.Contract('0xb2a5110f163ec592f8f0d4207253d8cbc327d9fb', landStakingPoolABI, provider);
 
-
 const findLand = (row, col) => {
-    return landTypes.find(item => item.row === row && item.col === col)
+    return landGridData.find(item => item.row === row && item.col === col)
 }
 app.get('/land/:address', async (req, res) => {
     try {
@@ -23,7 +23,7 @@ app.get('/land/:address', async (req, res) => {
         if (address && ethers.utils.isAddress(address)) {
             const landList = await landStakingPoolContract.getStakedLands(address);
             const landListWallet = await landContract.landOfOwner(address);
-            const results = { address: address, owned: [], staked: [] }
+            const results = { address: address, stakedStats: [], owned: [], staked: [] }
             const tempArr = []
             for (var i = 0; i < landList.length; i++) {
                 tempArr.push(landContract.decodeTokenId(landList[i]))
