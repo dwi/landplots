@@ -15,15 +15,8 @@ const landStakingPoolABI = require("./LandStakingPool.json")
 const landContract = new ethers.Contract('0x8c811e3c958e190f5ec15fb376533a3398620500', landABI, provider);
 const landStakingPoolContract = new ethers.Contract('0xb2a5110f163ec592f8f0d4207253d8cbc327d9fb', landStakingPoolABI, provider);
 
-var whitelist = ['*']
 var corsOptionsDelegate = function (req, callback) {
-    var corsOptions;
-    if (whitelist.indexOf(req.header('Origin')) !== -1) {
-        corsOptions = { origin: true }
-    } else {
-        corsOptions = { origin: false }
-    }
-    callback(null, corsOptions)
+    callback(null, { origin: true })
 }
 app.use(cors(corsOptionsDelegate))
 
